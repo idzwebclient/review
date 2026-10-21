@@ -40,7 +40,7 @@ window.SETTINGS = {
   contohUlasan: "Tulis pengalaman anda di Qudani Jewels Alor Setar...",
 
   // Butang dan nota bawah (boleh guna <b>...</b> untuk tulisan tebal)
-  butang: "Teruskan ke Google Review ↗",
+  butang: "Salin & Teruskan ke Google Review ↗",
   notaBawah: "Di Google, pilih bilangan bintang berdasarkan pengalaman sebenar anda, tampal ulasan jika mahu, kemudian tekan <b>Post</b>. Ulasan tidak dihantar secara automatik.",
 
   // Mesej kecil di bawah butang
