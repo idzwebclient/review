@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ms">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ulasan Google</title>
+<script src="settings.js"></script>
+<style>
+:root{--gold:#b18b45;--gold-soft:#f8f1e4;--ink:#1f1f1f;--muted:#6f6a62;--line:#e6dfd2;--field:#fcfbf8}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f1ea;color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:16px;-webkit-font-smoothing:antialiased}
+.card{width:min(100%,440px);background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 40px #0000000a;padding:24px 20px 20px}
+header{text-align:center}
+.logo{display:block;width:170px;max-width:70%;height:auto;margin:0 auto}
+.branch{margin-top:6px;color:var(--gold);font-size:10.5px;letter-spacing:.28em;font-weight:700}
+h1{font-size:20px;line-height:1.25;margin:16px 0 4px;letter-spacing:-.01em}
+.intro{margin:0 auto;max-width:34ch;color:var(--muted);font-size:13px;line-height:1.45}
+.form{margin-top:18px;padding-top:18px;border-top:1px solid var(--line);display:grid;gap:14px}
+.field{display:grid;gap:7px}
+label,.label{font-size:13.5px;font-weight:600}
+.choices{display:flex;flex-wrap:wrap;gap:6px}
+.chip{flex:1 1 auto;height:40px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:#4a463f;font:inherit;font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--gold-soft);border-color:var(--gold);color:#6d4b19;font-weight:600}
+input,textarea{width:100%;border:1px solid var(--line);background:var(--field);border-radius:10px;font:inherit;font-size:16px;color:var(--ink)}
+input{height:44px;padding:0 13px}
+textarea{height:84px;padding:10px 13px;line-height:1.4;resize:none}
+input::placeholder,textarea::placeholder{color:#ada699}
+input:focus,textarea:focus,.chip:focus-visible{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px #b18b4524}
+.note{margin:-2px 0 0;color:var(--muted);font-size:12px;line-height:1.4}
+.actions{display:grid;gap:8px;margin-top:2px}
+.google{height:50px;width:100%;border:0;border-radius:12px;background:var(--ink);color:#fff;font:inherit;font-size:15px;font-weight:650;cursor:pointer}
+.status{font-size:12px;text-align:center;color:#527144}.status:empty{display:none}
+.foot{margin:0;text-align:center;font-size:11.5px;line-height:1.45;color:#8a857c}
+@media(max-height:760px){.intro{display:none}h1{margin-top:12px}.form{margin-top:14px;padding-top:14px;gap:12px}}
+@media(max-height:700px){.note{display:none}.form{gap:11px}.field{gap:6px}textarea{height:66px}}@media(max-width:420px){.chip{padding:0 8px;font-size:12.5px}}@media(max-width:380px){body{padding:10px}.card{padding-left:16px;padding-right:16px}.chip{padding:0 6px;font-size:12px}}@media(max-height:620px){body{padding:8px}.card{padding:16px 16px 14px}.logo{width:140px}.branch,.note{display:none}h1{font-size:18px;margin-top:8px}.form{gap:10px}.field{gap:5px}input{height:40px}.chip{height:38px}textarea{height:64px}.google{height:46px}.foot{font-size:11px}}
+</style>
+</head>
+<body><main class="card">
+<header><img class="logo" id="logo" alt="Logo"><div class="branch" id="cawangan"></div><h1 id="tajuk"></h1><p class="intro" id="pengenalan"></p></header>
+<div class="form">
+<div class="field"><span class="label" id="soalan1"></span><div class="choices" id="choices"></div></div>
+<div class="field"><label for="staff" id="soalan2"></label><input id="staff" type="text" autocomplete="off"></div>
+<div class="field"><label for="like" id="soalan3"></label><input id="like" type="text" autocomplete="off"></div>
+<div class="field"><label for="review" id="tajukUlasan"></label><p class="note" id="notaUlasan"></p><textarea id="review"></textarea></div>
+<div class="actions"><button class="google" id="continue" type="button"></button><div class="status" id="status" role="status" aria-live="polite"></div><p class="foot" id="notaBawah"></p></div>
+</div>
+</main>
+<script>
+const S=window.SETTINGS;
+if(!S){document.body.innerHTML='<p style="padding:24px">Fail settings.js tidak dijumpai atau ada kesilapan. Pastikan ia berada dalam folder yang sama.</p>';throw new Error('settings.js')}
+const $=id=>document.getElementById(id);
+document.title=S.tajukTab;$('logo').src=S.logo;
+['cawangan','tajuk','pengenalan','soalan1','soalan2','soalan3','tajukUlasan','notaUlasan'].forEach(k=>$(k).textContent=S[k]);
+$('notaBawah').innerHTML=S.notaBawah;$('continue').textContent=S.butang;
+$('staff').placeholder=S.contohStaf;$('like').placeholder=S.contohSuka;$('review').placeholder=S.contohUlasan;
+S.pilihan.forEach(p=>{const b=document.createElement('button');b.className='chip';b.type='button';b.setAttribute('aria-pressed','false');b.dataset.text=p.ayat;b.textContent=p.label;$('choices').append(b)});
+const chips=[...document.querySelectorAll('.chip')],staff=$('staff'),like=$('like'),area=$('review'),status=$('status');let generated='';
+const sentence=s=>{s=s.trim();if(!s)return'';s=s[0].toUpperCase()+s.slice(1);return/[.!?]$/.test(s)?s:s+'.'};
+function build(){const c=chips.find(c=>c.getAttribute('aria-pressed')==='true');const name=staff.value.trim();return[c?c.dataset.text:'',sentence(like.value),name?S.ayatTerimaKasih.replace('{nama}',name):''].filter(Boolean).join(' ')}
+function refresh(){const next=build();if(!area.value.trim()||area.value===generated){area.value=next;status.textContent=''}else{status.textContent=S.mesejDahEdit}generated=next}
+chips.forEach(chip=>chip.addEventListener('click',()=>{const on=chip.getAttribute('aria-pressed')!=='true';chips.forEach(c=>c.setAttribute('aria-pressed','false'));chip.setAttribute('aria-pressed',on?'true':'false');refresh()}));
+[staff,like].forEach(el=>el.addEventListener('input',refresh));
+$('continue').addEventListener('click',async()=>{
+ const value=area.value.trim();
+ if(value){try{await navigator.clipboard.writeText(value);status.textContent=S.mesejDisalin}catch(e){area.focus();area.select();status.textContent=S.mesejTakDapatSalin}}
+ window.open(S.googleReviewLink,'_blank','noopener,noreferrer');
+});
+</script></body></html>
